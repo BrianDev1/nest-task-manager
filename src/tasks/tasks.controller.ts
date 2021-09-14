@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { Task } from './tasks.model';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { Task, TaskStatus } from './tasks.model';
 import { TasksService } from './tasks.service';
 
 // Can change this to be a resolver for GraphQL
@@ -12,8 +13,25 @@ export class TasksController {
         return this.tasksService.getAllTasks();
     }
 
+    // No Error hanlding for simplicity
+    // Could possibly be undefined
+    @Get("/:id")
+    getTaskById(@Param("id") id: string): Task {
+        return this.tasksService.getTaskById(id);
+    }
+
     @Post()
-    createTask(@Body("title") title: string, @Body("description") description: string ): Task {
-        return this.tasksService.createTask(title,description);
+    createTask(@Body() createTaskDto: CreateTaskDto ): Task {
+        return this.tasksService.createTask(createTaskDto);
+    }
+
+    @Delete("/:id")
+    deleteTask(@Param("id") id: string): string {
+        return this.tasksService.deleteTask(id);
+    }
+
+    @Patch("/:id/:status")
+    updateTaskStatus(@Param("id") id: string, @Param("status") status: TaskStatus): Task {
+        return this.tasksService.updateTaskStatus(id, status);
     }
 }
